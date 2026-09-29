@@ -52,16 +52,16 @@ There's no Three.js. Road → map is the same camera changing pitch (11° → 90
 Research notes, with sources, are in `RESEARCH_AND_STORYBOARD.md`.
 
 * Every range, mileage and battery number is labeled **Illustrative scenario**. There are no ETAs, charging speeds, prices, earnings or provider counts.
-* The phone UI is labeled **Conceptual interface**, because Mocha's real app (`app.mochaev.com`) is behind a login.
+* The request steps are labeled **Conceptual**, because Mocha's real app (`app.mochaev.com`) is behind a login.
 * PowerBridge Pro is credited to RoamEnergy, with a compatibility caveat and a link to the tested vehicle list.
 * The map shows the contiguous US only, and its dots are labeled illustrative.
 * All CTAs link to the real destinations: `app.mochaev.com`, the RoamEnergy Mocha discount link, the privacy page and support email.
 
 ## Performance, SEO and accessibility
 
-* JS is about 76 KB gzip for React plus the page, and the engine is a separate 28 KB gzip chunk loaded after first paint. CSS is 6 KB. No images besides the logo and one PowerBridge photo, which is lazy-loaded.
-* DPR is capped (1.5 on phones) and there's a pixel budget. Rendering drops to 30 fps when the scroll is idle and pauses in background tabs.
-* Every scene is a real `<section>` with headings and copy, pre-rendered to HTML. The page also has a canonical URL, OG/Twitter tags, JSON-LD (`Organization`, `Service` with areaServed = continental US), and `robots.txt` / `sitemap.xml`.
+* JS is about 83 KB gzip for React plus the page (including the coverage map), and the film renderer is a separate 18 KB gzip chunk loaded after first paint. CSS is 5 KB. There's no video. The only images are the logo and one lazy-loaded PowerBridge photo.
+* DPR is capped (1.5 on phones) and there's a pixel budget. Nothing renders while the film is paused, off screen or in a background tab.
+* The film's H1, captions and a text summary, plus every section below, are pre-rendered semantic HTML. The page also has a canonical URL, OG/Twitter tags, JSON-LD (`Organization`, `Service` with areaServed = continental US), and `robots.txt` / `sitemap.xml`.
 * "Get help now" is in the top bar from the first frame, and "Skip to content" is the first tab stop.
 * Without JS, or if the renderer fails, the hero shows the title over a painted golden-hour background, and every section below is plain HTML.
 
