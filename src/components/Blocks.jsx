@@ -84,57 +84,10 @@ export function PowerBridge() {
   );
 }
 
-/* ---------- Two sides, one network ---------- */
-const CHAIN = ['Driver', 'Request', 'Mocha', 'Match', 'Provider', 'Charge', 'Driver continues'];
-export function TwoSides() {
-  return (
-    <div className="sides">
-      <div className="side side-d">
-        <p className="eyebrow">Driver</p>
-        <h3>{SITE.driverTitle}</h3>
-        <p>{SITE.driverBody}</p>
-        <Cta href={LINKS.app}>{SITE.driverCta}</Cta>
-      </div>
-      <div className="hub" aria-hidden="true">
-        <span className="hub-line l" />
-        <span className="hub-core">
-          <Logo alt="" />
-        </span>
-        <span className="hub-line r" />
-      </div>
-      <div className="side side-p">
-        <p className="eyebrow">Provider</p>
-        <h3>{SITE.providerTitle}</h3>
-        <p>{SITE.providerBody}</p>
-        <Cta href={LINKS.app} kind="ghost">{SITE.providerCta}</Cta>
-      </div>
-      <div className="how">
-        <h2 className="how-title">How Mocha works</h2>
-        <ol className="how-steps">
-          {SITE.steps.map((s, i) => (
-            <li key={s.title} style={{ '--i': i }}>
-              <span className="how-n">{i + 1}</span>
-              <strong>{s.title}</strong>
-              <span>{s.body}</span>
-            </li>
-          ))}
-        </ol>
-        <ol className="chain" aria-label="The loop">
-          {CHAIN.map((c, i) => (
-            <li key={c} style={{ '--i': i }} className={c === 'Mocha' ? 'mid' : ''}>
-              {c}
-            </li>
-          ))}
-        </ol>
-      </div>
-    </div>
-  );
-}
-
 /* ---------- Final ---------- */
 export function FinalCta() {
   return (
-    <div className="final" id="get-help">
+    <div className="final">
       <Logo className="final-logo" alt="Mocha" />
       <p className="final-lede">{SITE.lede}</p>
       <div className="final-pair">

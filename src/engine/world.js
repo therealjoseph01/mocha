@@ -7,7 +7,7 @@ import { rng, smooth } from './math.js';
 export const K = 80; // world meters per illustrative "mile"
 export const S_STOP = 32 * K; // where the car runs out (range 32 → 0)
 export const CHARGER_A = 14 * K + 27 * K; // at range 18 the nearest charger is 27 "mi" away
-export const CHARGER_B = 25 * K; // an out-of-service charger the car passes
+export const CHARGER_B = S_STOP - 140; // an out-of-service charger the car passes a few seconds before it stops
 export const LANE = 1.8; // lane center offset
 export const SHOULDER = 4.7; // shoulder offset
 export const GRID = 400;
@@ -114,8 +114,9 @@ export const LAMPS = []; // {x,y,h:height, s?}
     LAMPS.push({ x: p.x, y: p.y, z: 8.5, s, arm: -side });
   };
   let side = 1;
-  for (let s = -400; s < 1700; s += 58) add(s, (side = -side));
-  for (let s = 1700; s < 2160; s += 125) add(s, (side = -side));
+  // lit stretch → sparse → dark as the film runs out of range
+  for (let s = -400; s < 2150; s += 58) add(s, (side = -side));
+  for (let s = 2150; s < 2350; s += 125) add(s, (side = -side));
   for (let s = 2980; s < 6400; s += s < 3600 ? 70 : 96) add(s, (side = -side));
   // town streets (lit) around the provider's start and the east neighborhood
   const town = (x0, x1, y0, y1) => {

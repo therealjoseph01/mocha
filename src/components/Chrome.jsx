@@ -1,45 +1,34 @@
+import { useEffect, useRef } from 'react';
 import { LINKS, LOGO, SITE, SCENARIO } from '../content.js';
-import { SCENES } from '../scenes.js';
 
 export function Logo({ className = '', alt = 'Mocha' }) {
   return <img className={`logo ${className}`} src={LOGO} alt={alt} width="500" height="109" decoding="async" />;
 }
 
 export function TopBar() {
+  const ref = useRef(null);
+  useEffect(() => {
+    // solid bar once the film has scrolled away (passive; never alters scrolling)
+    const on = () => ref.current?.classList.toggle('solid', window.scrollY > window.innerHeight * 0.8);
+    on();
+    window.addEventListener('scroll', on, { passive: true });
+    return () => window.removeEventListener('scroll', on);
+  }, []);
   return (
-    <header className="topbar">
-      <a className="skip" href="#get-help">Skip the story</a>
+    <header className="topbar" ref={ref}>
+      <a className="skip" href="#drivers">Skip to content</a>
       <a className="brand" href="https://www.mochaev.com/" aria-label="Mocha home">
         <Logo alt="Mocha" />
       </a>
-      <nav className="top-actions" aria-label="Account">
-        <a className="sos" href={LINKS.app}>
+      <nav className="top-actions" aria-label="Primary">
+        <a className="top-link hide-sm" href="#providers">Become a provider</a>
+        <a className="top-link hide-sm" href={LINKS.app}>Sign in</a>
+        <a className="top-cta" href={LINKS.app}>
           <span className="sos-dot" aria-hidden="true" />
-          Stranded now? <strong>Get help</strong>
+          Get help now
         </a>
-        <a className="signin" href={LINKS.app}>Sign in</a>
       </nav>
     </header>
-  );
-}
-
-export function TripNav() {
-  const chapters = SCENES.map((s, i) => ({ ...s, i })).filter(s => s.chapter);
-  return (
-    <nav className="trip" aria-label="Story chapters">
-      <span className="trip-line" aria-hidden="true">
-        <span className="trip-fill" />
-      </span>
-      <ol>
-        {chapters.map(c => (
-          <li key={c.id}>
-            <a href={`#${c.id}`} data-to={c.i}>
-              <span>{c.chapter}</span>
-            </a>
-          </li>
-        ))}
-      </ol>
-    </nav>
   );
 }
 
@@ -112,7 +101,7 @@ export function Footer() {
         </ul>
       </div>
       <p className="footer-fine">
-        Range, mileage, battery and map values in the story above are illustrative. They are not Mocha
+        Range, mileage, battery and map values in the film above are illustrative. They are not Mocha
         performance figures, response times or provider counts. PowerBridge Pro is a RoamEnergy product.
       </p>
     </footer>

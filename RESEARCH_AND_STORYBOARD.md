@@ -69,3 +69,52 @@ Scenes 13 and 16 of the brief were merged into 14 above. The brief's "environmen
 * **Reduced motion:** captions show as static blocks, the canvas shows one representative frame per scene, and there's no smoothing.
 * **Mobile:** portrait-specific camera (higher chase camera, car in the lower third), HUD pinned to the top edge, captions at the bottom, the two-sides scene stacks vertically, DPR capped at 1.5, fewer map entities.
 * **SEO:** title and description target emergency / mobile / roadside EV charging. Canonical, OG/Twitter, JSON-LD `Organization` + `Service` (areaServed: contiguous US), sitemap, robots.
+
+---
+
+# v2 — Self-playing film (after Mocha's feedback)
+
+> "It may be a better idea as a self-playing animation or video. It requires a lot of scrolling to go through the entire sequence."
+
+## Audit of v1 (live at mocha-vert-tau.vercel.app)
+
+* **46 viewport heights of scroll** at 1720×997 (17 scenes, 180–320 vh each). The core rescue alone (drive → back on road, 10 scenes) was ~26 screens.
+* Keep: golden-hour → night road, range/charger HUD, the 0% stop, road → map camera rise, provider route, map → road descent, cable + charging payoff, drive-off at dawn, brand + CTAs.
+* Cut from the film: the "quiet" hold scene (folded into a 2 s beat), the provider road-level dip (unreadable at film speed), provider POV, multi-job map, national zoom, fixed-vs-moving, PowerBridge and two-sides scenes. Coverage, provider and PowerBridge move into short normal sections below.
+* Bug spotted in v1: HUD battery readout overlapped bottom-left captions on desktop.
+
+## Architecture: time, not scroll
+
+`state = film(time)` — a pure function of seconds. Play, pause, seek, replay and scrubbing are all just "which second are we on", so scrubbing is exact and smooth. The renderer, world, meshes and camera from v1 are reused unchanged.
+
+**Video vs real-time canvas:** stay real-time. The whole engine is ~28 KB gzip vs several MB for a 40 s 1080p video (plus a second portrait encode). Canvas gives exact portrait framing, crisp HUD, frame-accurate scrubbing, and no decode stalls. Frames render in single-digit milliseconds on the 2D canvas. Nothing in the film is expensive enough to justify video.
+
+## Timeline (43.5 s)
+
+| s | Beat | On screen |
+|---|---|---|
+| 0.0–2.8 | Hero | Logo + H1 over golden-hour road; range 32 |
+| 2.8–6.4 | Drive | 29 → 18 mi; nearest charger appears at 27 mi |
+| 6.4–9.4 | Too far | 18 → 9; "Nearest charger: too far"; dusk → night |
+| 9.4–12.6 | Critical | 9 → 1; passes an out-of-service charger |
+| 12.6–14.0 | Stop | Coasts to the shoulder |
+| 14.0–16.0 | 0% | Silence. Hazards. |
+| 16.0–18.6 | Request | "Need a charge?" → location shared → request sent |
+| 18.6–22.0 | Map | Camera rises, car becomes a dot, provider found |
+| 22.0–27.0 | Help moving | Provider travels the route; "Help is on the way" |
+| 27.0–30.2 | Arrival | Map → road; provider pulls in behind |
+| 30.2–31.6 | Connect | Portable charger, cable, "Connected" |
+| 31.6–35.4 | Charging | 0 → 3 → 7 → 12% (illustrative), lights wake |
+| 35.4–36.4 | Disconnect | Cable off |
+| 36.4–40.6 | Back on road | Car merges, first light; "Back on the road" |
+| 40.6–43.5 | CTA | Camera pulls away; logo, I Need a Charge / I'm a Charge Provider |
+
+Chapters (scrubber): Driving 0 · Stranded 12.6 · Request 16 · Provider 18.6 · Charging 30.2 · Back on the road 36.4.
+
+## Playback rules
+
+Starts only when ≥35% of the hero is visible; pauses when the hero leaves the viewport or the tab is hidden; resumes only if it wasn't paused by the visitor; never restarts on its own; ends on the CTA frame and waits for Replay. `prefers-reduced-motion`: no autoplay, a still frame, chapter buttons jump between stills. No audio. Scroll is never intercepted. CTAs are in the top bar from the first frame.
+
+## Page after the film
+
+Hero film (1 screen) → Drivers → Providers → Coverage → PowerBridge Pro → Final CTA → Footer. About 5–6 screens total instead of 46.
